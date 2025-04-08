@@ -1,1 +1,2 @@
-# EVE-FURNITURE
+email:admin@evefurniture.com
+password:password
