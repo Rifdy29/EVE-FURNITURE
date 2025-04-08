@@ -1,0 +1,123 @@
+<?php
+session_start();
+include 'db_connection.php';
+
+// Check if admin is logged in
+if (!isset($_SESSION['user_id']) || $_SESSION['user_type'] != 'admin') {
+    header("Location: login.php");
+    exit();
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .sidebar {
+            background-color: #343a40;
+            min-height: 100vh;
+            color: white;
+        }
+        .sidebar-header {
+            background-color: #FFA500;
+            padding: 20px;
+            text-align: center;
+        }
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+        .sidebar-menu a {
+            color: white;
+            display: block;
+            padding: 10px 20px;
+            text-decoration: none;
+        }
+        .sidebar-menu a:hover {
+            background-color: #495057;
+        }
+        .main-content {
+            padding: 20px;
+        }
+        .card {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 sidebar">
+                <div class="sidebar-header">
+                    <h4>Admin Panel</h4>
+                    <p>Welcome, <?php echo $_SESSION['name']; ?></p>
+                </div>
+                <div class="sidebar-menu">
+                    <a href="admin_dashboard.php"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                    <a href="manage_products.php"><i class="fas fa-box-open"></i> Manage Products</a>
+                    <a href="manage_orders.php"><i class="fas fa-shopping-cart"></i> Manage Orders</a>
+                    <a href="manage_users.php"><i class="fas fa-users"></i> Manage Users</a>
+                    <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 main-content">
+                <h2>Admin Dashboard</h2>
+                <hr>
+                
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Total Products</h5>
+                                <?php
+                                $result = $conn->query("SELECT COUNT(*) FROM products");
+                                $count = $result->fetch_row()[0];
+                                ?>
+                                <h2><?php echo $count; ?></h2>
+                                <a href="manage_products.php" class="btn btn-primary">View Products</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Pending Orders</h5>
+                                <?php
+                                $result = $conn->query("SELECT COUNT(*) FROM orders WHERE status='pending'");
+                                $count = $result->fetch_row()[0];
+                                ?>
+                                <h2><?php echo $count; ?></h2>
+                                <a href="manage_orders.php" class="btn btn-primary">View Orders</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Total Customers</h5>
+                                <?php
+                                $result = $conn->query("SELECT COUNT(*) FROM users WHERE user_type='customer'");
+                                $count = $result->fetch_row()[0];
+                                ?>
+                                <h2><?php echo $count; ?></h2>
+                                <a href="manage_users.php" class="btn btn-primary">View Customers</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
